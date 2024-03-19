@@ -12,7 +12,8 @@ class Gofile:
         self.api_url = "https://api.gofile.io/"
         self.dluploader = dluploader
         self.token = token
-    
+        
+
     @staticmethod
     async def is_goapi(token):
         if token is None:
