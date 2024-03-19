@@ -668,23 +668,18 @@ def terabox(url, auth):
         return details['contents'][0]['url']
     return details
 
-def gofile(url):
+def gofile(url, auth):
     try:
-        if "::" in url:
-            _password = url.split("::")[-1]
-            _password = sha256(_password.encode("utf-8")).hexdigest()
-            url = url.split("::")[-2]
-        else:
-            _password = ''
+        _password = sha256(auth[1].encode("utf-8")).hexdigest() if auth else ''
         _id = url.split("/")[-1]
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
     def __get_token(session):
         if 'gofile_token' in _caches:
-            __url = f"https://api.gofile.io/accounts/{_caches['gofile_token']}"
+            __url = f"https://api.gofile.io/getAccountDetails?token={_caches['gofile_token']}"
         else:
-            __url = 'https://api.gofile.io/accounts'
+            __url = 'https://api.gofile.io/createAccount'
         try:
             __res = session.get(__url, verify=False).json()
             if __res["status"] != 'ok':
@@ -697,7 +692,7 @@ def gofile(url):
             raise e
 
     def __fetch_links(session, _id, folderPath=''):
-        _url = f"https://api.gofile.io/contents/{_id}?token={token}?wt=4fd6sg89d7s6&cache=true"
+        _url = f"https://api.gofile.io/getContent?contentId={_id}&token={token}&wt=4fd6sg89d7s6&cache=true"
         if _password:
             _url += f"&password={_password}"
         try:
