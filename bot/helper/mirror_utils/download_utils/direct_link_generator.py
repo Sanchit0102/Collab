@@ -583,7 +583,7 @@ def uploadee(url):
     else:
         raise DirectDownloadLinkException("ERROR: Direct Link not found")
 
-def terabox(url):
+def terabox(url, auth):
     if not path.isfile('terabox.txt'):
         raise DirectDownloadLinkException("ERROR: terabox.txt not found")
     try:
