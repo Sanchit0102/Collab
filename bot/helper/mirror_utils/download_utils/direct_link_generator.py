@@ -583,7 +583,7 @@ def uploadee(url):
     else:
         raise DirectDownloadLinkException("ERROR: Direct Link not found")
 
-def terabox(url, auth):
+def terabox(url):
     if not path.isfile('terabox.txt'):
         raise DirectDownloadLinkException("ERROR: terabox.txt not found")
     try:
@@ -667,6 +667,7 @@ def terabox(url, auth):
     if len(details['contents']) == 1:
         return details['contents'][0]['url']
     return details
+
 
 def gofile(url, auth):
     try:
@@ -754,6 +755,7 @@ def gofile(url, auth):
     if len(details['contents']) == 1:
         return (details['contents'][0]['url'], details['header'])
     return details
+
 
 def gd_index(url, auth):
     if not auth:
