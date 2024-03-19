@@ -678,9 +678,9 @@ def gofile(url, auth):
 
     def __get_token(session):
         if 'gofile_token' in _caches:
-            __url = f"https://api.gofile.io/getAccountDetails?token={_caches['gofile_token']}"
+            __url = f"https://api.gofile.io/accounts/{_caches['gofile_token']}"
         else:
-            __url = 'https://api.gofile.io/createAccount'
+            __url = 'https://api.gofile.io/accounts'
         try:
             __res = session.get(__url, verify=False).json()
             if __res["status"] != 'ok':
@@ -693,7 +693,7 @@ def gofile(url, auth):
             raise e
 
     def __fetch_links(session, _id, folderPath=''):
-        _url = f"https://api.gofile.io/getContent?contentId={_id}&token={token}&wt=4fd6sg89d7s6&cache=true"
+        _url = f"https://api.gofile.io/contents/{_id}?token={token}?wt=4fd6sg89d7s6&cache=true"
         if _password:
             _url += f"&password={_password}"
         try:
