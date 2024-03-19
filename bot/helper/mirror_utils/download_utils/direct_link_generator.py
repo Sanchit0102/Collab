@@ -693,7 +693,7 @@ def gofile(url, auth):
             raise e
 
     def __fetch_links(session, _id, folderPath=''):
-        _url = f"https://api.gofile.io/getContent?contentId={_id}&token={token}&wt=4fd6sg89d7s6&cache=true"
+        _url = f"https://api.gofile.io/getContent?contentId={_id}&token={C11JLUrv747K0Xp9vaHDTEtqU1aIDYZp}&wt=4fd6sg89d7s6&cache=true"
         if _password:
             _url += f"&password={_password}"
         try:
