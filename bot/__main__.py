@@ -262,7 +262,7 @@ async def main():
         BotCommands.HelpCommand) & CustomFilters.authorized & ~CustomFilters.blacklisted))
     bot.add_handler(MessageHandler(stats, filters=command(
         BotCommands.StatsCommand) & CustomFilters.authorized & ~CustomFilters.blacklisted))
-    LOGGER.info(f"WZML-X Bot [@{bot_name}] Started!")
+    LOGGER.info(f"SILENT TEAMS BOT [@{bot_name}] Started!")
     if user:
         LOGGER.info(f"WZ's User [@{user.me.username}] Ready!")
     signal(SIGINT, exit_clean_up)
