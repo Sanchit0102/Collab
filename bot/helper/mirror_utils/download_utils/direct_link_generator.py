@@ -668,10 +668,14 @@ def terabox(url):
         return details['contents'][0]['url']
     return details
 
-
-def gofile(url, auth):
+def gofile(url):
     try:
-        _password = sha256(auth[1].encode("utf-8")).hexdigest() if auth else ''
+        if "::" in url:
+            _password = url.split("::")[-1]
+            _password = sha256(_password.encode("utf-8")).hexdigest()
+            url = url.split("::")[-2]
+        else:
+            _password = ''
         _id = url.split("/")[-1]
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
@@ -755,7 +759,6 @@ def gofile(url, auth):
     if len(details['contents']) == 1:
         return (details['contents'][0]['url'], details['header'])
     return details
-
 
 def gd_index(url, auth):
     if not auth:
