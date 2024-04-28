@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 from threading import Thread
 from base64 import b64decode
@@ -23,6 +24,9 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.help_messages import PASSWORD_ERROR_MESSAGE
 
 _caches = {}
+user_agent = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36"
+)
 
 fmed_list = ['fembed.net', 'fembed.com', 'femax20.com', 'fcdn.stream', 'feurl.com', 'layarkacaxxi.icu',
              'naniplay.nanime.in', 'naniplay.nanime.biz', 'naniplay.com', 'mm9842.com']
@@ -155,7 +159,7 @@ def direct_link_generator(link):
     elif 'letsupload.io' in domain:
         return letsupload(link)
     elif 'gofile.io' in domain:
-        return gofile(link, auth)
+        return gofile(link)
     elif 'easyupload.io' in domain:
         return easyupload(link)
     elif 'streamvid.net' in domain:
@@ -537,7 +541,7 @@ def solidfiles(url):
     with create_scraper() as session:
         try:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36'
+                'User-Agent': user_agent
             }
             pageSource = session.get(url, headers=headers).text
             mainOptions = str(
@@ -669,91 +673,107 @@ def terabox(url):
     return details
 
 
-def gofile(url, auth):
+def gofile(url):
     try:
-        _password = sha256(auth[1].encode("utf-8")).hexdigest() if auth else ''
+        if "::" in url:
+            _password = url.split("::")[-1]
+            _password = sha256(_password.encode("utf-8")).hexdigest()
+            url = url.split("::")[-2]
+        else:
+            _password = ""
         _id = url.split("/")[-1]
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
     def __get_token(session):
-        if 'gofile_token' in _caches:
-            __url = f"https://api.gofile.io/getAccountDetails?token={_caches['gofile_token']}"
-        else:
-            __url = 'https://api.gofile.io/createAccount'
+        headers = {
+            "User-Agent": user_agent,
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+        }
+        __url = f"https://api.gofile.io/accounts"
         try:
-            __res = session.get(__url, verify=False).json()
-            if __res["status"] != 'ok':
-                if 'gofile_token' in _caches:
-                    del _caches['gofile_token']
-                return __get_token(session)
-            _caches['gofile_token'] = __res["data"]["token"]
-            return _caches['gofile_token']
+            __res = session.post(__url, headers=headers).json()
+            if __res["status"] != "ok":
+                raise DirectDownloadLinkException(f"ERROR: Failed to get token.")
+            return __res["data"]["token"]
         except Exception as e:
             raise e
 
-    def __fetch_links(session, _id, folderPath=''):
-        _url = f"https://api.gofile.io/getContent?contentId={_id}&token={C11JLUrv747K0Xp9vaHDTEtqU1aIDYZp}&wt=4fd6sg89d7s6&cache=true"
+    def __fetch_links(session, _id, folderPath=""):
+        _url = f"https://api.gofile.io/contents/{_id}?wt=4fd6sg89d7s6&cache=true"
+        headers = {
+            "User-Agent": user_agent,
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            "Authorization": "Bearer" + " " + token,
+        }
         if _password:
             _url += f"&password={_password}"
         try:
-            _json = session.get(_url, verify=False).json()
+            _json = session.get(_url, headers=headers).json()
         except Exception as e:
             raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
-        if _json['status'] in 'error-passwordRequired':
-            raise DirectDownloadLinkException(f"ERROR:\n{PASSWORD_ERROR_MESSAGE.format(url)}")
-        if _json['status'] in 'error-passwordWrong':
-            raise DirectDownloadLinkException('ERROR: This password is wrong !')
-        if _json['status'] in 'error-notFound':
-            raise DirectDownloadLinkException("ERROR: File not found on gofile's server")
-        if _json['status'] in 'error-notPublic':
+        if _json["status"] in "error-passwordRequired":
+            raise DirectDownloadLinkException(
+                f"ERROR:\n{PASSWORD_ERROR_MESSAGE.format(url)}"
+            )
+        if _json["status"] in "error-passwordWrong":
+            raise DirectDownloadLinkException("ERROR: This password is wrong !")
+        if _json["status"] in "error-notFound":
+            raise DirectDownloadLinkException(
+                "ERROR: File not found on gofile's server"
+            )
+        if _json["status"] in "error-notPublic":
             raise DirectDownloadLinkException("ERROR: This folder is not public")
 
         data = _json["data"]
 
-        if not details['title']:
-            details['title'] = data['name'] if data['type'] == "folder" else _id
 
-        contents = data["contents"]
+        if not details["title"]:
+            details["title"] = data["name"] if data["type"] == "folder" else _id
+
+        contents = data["children"]
         for content in contents.values():
             if content["type"] == "folder":
-                if not content['public']:
+                if not content["public"]:
                     continue
                 if not folderPath:
-                    newFolderPath = path.join(
-                        details['title'], content["name"])
+                    newFolderPath = path.join(details["title"], content["name"])
                 else:
                     newFolderPath = path.join(folderPath, content["name"])
                 __fetch_links(session, content["id"], newFolderPath)
             else:
                 if not folderPath:
-                    folderPath = details['title']
+                    folderPath = details["title"]
                 item = {
                     "path": path.join(folderPath),
                     "filename": content["name"],
                     "url": content["link"],
                 }
-                if 'size' in content:
+                if "size" in content:
                     size = content["size"]
                     if isinstance(size, str) and size.isdigit():
                         size = float(size)
-                    details['total_size'] += size
-                details['contents'].append(item)
+                    details["total_size"] += size
+                details["contents"].append(item)
 
-    details = {'contents':[], 'title': '', 'total_size': 0}
+    details = {"contents": [], "title": "", "total_size": 0}
     with Session() as session:
         try:
             token = __get_token(session)
         except Exception as e:
             raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
-        details["header"] = f'Cookie: accountToken={token}'
+        details["header"] = f"Cookie: accountToken={token}"
         try:
             __fetch_links(session, _id)
         except Exception as e:
             raise DirectDownloadLinkException(e)
 
-    if len(details['contents']) == 1:
-        return (details['contents'][0]['url'], details['header'])
+    if len(details["contents"]) == 1:
+        return (details["contents"][0]["url"], details["header"])
     return details
 
 
