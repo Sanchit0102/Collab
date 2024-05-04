@@ -24,7 +24,7 @@ class _BotCommands:
         self.CancelAllCommand = [f'cancelall{CMD_SUFFIX}', 'cancellallbot']
         self.ListCommand = f'list{CMD_SUFFIX}'
         self.SearchCommand = f'search{CMD_SUFFIX}'
-        self.StatusCommand = [f'status{CMD_SUFFIX}', f's{CMD_SUFFIX}', 'statusall']
+        self.StatusCommand = [f'status{CMD_SUFFIX}', f's{CMD_SUFFIX}', 'ROBO']
         self.UsersCommand = f'users{CMD_SUFFIX}'
         self.AuthorizeCommand = [f'authorize{CMD_SUFFIX}', f'a{CMD_SUFFIX}']
         self.UnAuthorizeCommand = [f'unauthorize{CMD_SUFFIX}', f'ua{CMD_SUFFIX}']
@@ -33,7 +33,7 @@ class _BotCommands:
         self.AddSudoCommand = f'addsudo{CMD_SUFFIX}'
         self.RmSudoCommand = f'rmsudo{CMD_SUFFIX}'
         self.PingCommand = [f'ping{CMD_SUFFIX}', f'p{CMD_SUFFIX}']
-        self.RestartCommand = [f'restart{CMD_SUFFIX}', f'r{CMD_SUFFIX}', 'restartall']
+        self.RestartCommand = [f'restart{CMD_SUFFIX}', f'r{CMD_SUFFIX}', 'DS']
         self.StatsCommand = [f'stats{CMD_SUFFIX}', f'st{CMD_SUFFIX}']
         self.HelpCommand = f'help{CMD_SUFFIX}'
         self.LogCommand = f'log{CMD_SUFFIX}'
