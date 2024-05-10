@@ -120,14 +120,8 @@ class WZMLStyle:
     # ---------------------
 
     # async def restart_notification(): ---> __main__.py
-    RESTART_SUCCESS = '''<b>♻️ Restarted Successfully! 🎉</b>
-
-╭ ▸<b>📅 Date:</b> {date}
-┠ ▸<b>⏰ Time:</b> {time}
-┠ ▸<b>🌍 TimeZone:</b> {timz}
-╰ ▸<b>🆔 Version:</b> {version}
-
-<a href="https://t.me/THE_SILENT_TEAMS"><b>♥️ ℙ𝕠𝕨𝕖𝕣𝕖𝕕 𝔹𝕪 𝕊𝕚𝕝𝕖𝕟𝕥 𝕋𝕖𝕒𝕞</b></a>'''
+    RESTART_SUCCESS = '''<b>♻️ Mai Jinda Huu 🎉</b>'''
+    
     RESTARTED = '''<b>🔄 Bot Restarted!</b>'''
     # ---------------------
 
