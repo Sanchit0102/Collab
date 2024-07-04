@@ -2,8 +2,8 @@
 class WZMLStyle:
     # ----------------------
     # async def start(client, message) ---> __main__.py
-    ST_BN1_NAME = 'Stream Bot'
-    ST_BN1_URL = 'https://t.me/SilentHelper_bot'
+    ST_BN1_NAME = 'Silent Bot System'
+    ST_BN1_URL = 'https://t.me/Silent_Bots'
     ST_BN2_NAME = 'Auto Bot'
     ST_BN2_URL = 'https://t.me/silentautobot'
     ST_MSG = '''<b>✨ Silent Team ➔ Mirror & Leech Bot</b>\n\nI Can Upload Files, Links, Torrents, etc. to Telegram, Google Drive, DDL Servers and Rclone Supported Sites!\n\n
